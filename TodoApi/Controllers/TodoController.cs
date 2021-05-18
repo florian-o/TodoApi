@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +43,9 @@ namespace TodoApi.Controllers
 
         // POST api/<TodoController>
         [HttpPost]
-        public IActionResult AddTodo([FromBody] TodoDtos todo)
+        public ActionResult<Todo.Core.Domain.Todo[]> AddTodo([FromBody] TodoDtos todo)        
         {
-            IActionResult result = this.BadRequest();
+            ActionResult result = this.BadRequest();
 
             var newTodo = this._context.Add(new Todo.Core.Domain.Todo
             {
@@ -59,22 +60,48 @@ namespace TodoApi.Controllers
             this._context.SaveChanges();
             if (newTodo != null)
             {
-                return this.Ok(todo);
+                todo.id = newTodo.idTodo;
+                return GetTodo();
 
             }
             return result;
         }
 
         // PUT api/<TodoController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public async Task<IActionResult> UpdateTodo(Todo.Core.Domain.Todo todo)
         {
+            if ( todo.idTodo == null)
+            {
+                return BadRequest();
+            }
+            this._context.Entry(todo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            try
+            {
+                await this._context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                var x = ex.Message;
+                return NotFound();
+            }
+            return Ok(todo);
         }
 
         // DELETE api/<TodoController>/5
+       
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteTodo(int id)
         {
+            var todoDelete = await this._context.Todos.FindAsync(id);
+            if (todoDelete == null)
+            {
+                return NoContent();
+            }
+            this._context.Todos.Remove(todoDelete);
+            await this._context.SaveChangesAsync();
+            return Ok(todoDelete);
         }
     }
 }

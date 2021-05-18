@@ -7,6 +7,7 @@ namespace TodoApi.Dtos
 {
     public class TodoDtos
     {
+        public int id { get; set; }
         public string todoName { get; set; }
         public bool todoStatus { get; set; } = false;
         public string description { get; set; }
