@@ -19,7 +19,7 @@ namespace Todo.Core.Infrastructures.Data
                 .Build();
 
             var builder = new DbContextOptionsBuilder();
-            builder.UseSqlServer(configurationRoot.GetConnectionString("DefaultConnection"));
+            builder.UseSqlServer(configurationRoot.GetConnectionString("DefaultConnection"),  b => b.MigrationsAssembly("Todo.Core.Data.Migrations"));
             TodoProjectContext context = new TodoProjectContext(builder.Options);
             return context;
         }

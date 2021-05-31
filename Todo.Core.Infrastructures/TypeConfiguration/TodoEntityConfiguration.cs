@@ -13,6 +13,11 @@ namespace Todo.Core.Infrastructures.TypeConfiguration
         public void Configure(EntityTypeBuilder<Domain.Todo> builder)
         {
             builder.HasKey(item => item.idTodo);
+            builder.HasOne(item => item.User)
+               .WithMany(item => item.Todos)
+               .HasForeignKey(item => item.userId);
+            
+               
         }
     }
 }

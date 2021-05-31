@@ -16,5 +16,8 @@ namespace Todo.Core.Domain
         public string image { get; set; }
         public DateTime todoDay { get; set; }
         public DateTime updatedAt { get; set; }
+        public ApplicationUser User { get; set; }
+        public string userId { get; set; }
+
     }
 }
